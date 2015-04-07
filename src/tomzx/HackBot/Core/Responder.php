@@ -25,6 +25,11 @@ abstract class Responder
 
 	public abstract function answer(array $data = []) : string;
 
+	public function help() : string
+	{
+		return '';
+	}
+
 	public function setDispatcher(Dispatcher $dispatcher) : this
 	{
 		$this->dispatcher = $dispatcher;

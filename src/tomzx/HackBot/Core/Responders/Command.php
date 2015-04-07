@@ -12,10 +12,33 @@ abstract class Command extends Responder
 
 	protected string $parameters = null;
 
+	public function respond(?string $text) : ?string
+	{
+		if ($response = parent::respond($text)) {
+			return $response;
+		}
+
+		if (preg_match('/^'.$this->getMatcherCommand().'/', $text)) {
+			return $this->help();
+		}
+
+		return null;
+	}
+
+	public function help()
+	{
+		return 'Usage: '.$this->getMatcherCommand().' '.$this->getHelp();
+	}
+
 	protected function getMatcher()
 	{
-		$command = $this->commandMatcher.$this->command;
+		$command = $this->getMatcherCommand();
 		return $this->parameters ? '/^'.$command.' '.$this->parameters.'/' : '/^'.$command.'/';
+	}
+
+	protected function getMatcherCommand()
+	{
+		return $this->commandMatcher.$this->command;
 	}
 
 	public function getCommandMatcher() : string
