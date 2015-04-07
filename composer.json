@@ -1,0 +1,44 @@
+{
+	"name": "tomzx/hack-bot",
+	"description": "A simple bot written in Hack/PHP.",
+	"type": "library",
+	"keywords": [
+		"bot",
+		"hack",
+		"php"
+	],
+	"homepage": "https://github.com/tomzx/hack-bot",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Tom Rochette",
+			"email": "tom@tomrochette.com",
+			"homepage": "http://www.tomrochette.com"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/tomzx/hack-bot/issues"
+	},
+	"require": {
+		"hhvm": ">=3.6.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "~4",
+		"mockery/mockery": "~0.9"
+	},
+	"autoload": {
+		"psr-4": {
+			"tomzx\\HackBot\\": "src/tomzx/HackBot"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"tomzx\\HackBot\\Test\\": "tests/tomzx/HackBot"
+		}
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "0.1-dev"
+		}
+	}
+}
