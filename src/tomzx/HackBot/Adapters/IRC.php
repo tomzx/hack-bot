@@ -69,21 +69,25 @@ class IRC
 		while($data = fgets($this->socket)) {
 			$this->out($data);
 
-			$parts = explode(' :', $data);
-			$trailing = count($parts) > 1 ? implode(array_slice($parts, 1)) : '';
+			$parts = explode(' :', $data, 2);
+			$trailing = count($parts) > 1 ? $parts[1] : null;
 			$parts = explode(' ', $parts[0]);
 			if ($parts[0] === 'PING') {
 				$this->send('PONG '.$trailing);
 				continue;
 			}
 
+			$from = substr($parts[0], 1);
+			list($nick) = explode('!', $from);
+
 			if ($parts[1] === 'PRIVMSG') {
 				$query = $trailing;
+				$to = $parts[2];
 				$meta = [
-					'from' => substr($parts[0], 1),
+					'from' => $from,
 					'command' => $parts[1],
 					'sent_to' => $parts[2],
-					'reply_to' => '#umbreon',
+					'reply_to' => $this->isChannel($to) ? $to : $nick,
 					'args' => explode(' ', $query),
 				];
 
@@ -130,5 +134,10 @@ class IRC
 		$this->join();
 		$this->loop();
 		$this->disconnect();
+	}
+
+	private function isChannel($target) : bool
+	{
+		return $target[0] === '#';
 	}
 }
