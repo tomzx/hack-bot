@@ -4,6 +4,7 @@ namespace tomzx\HackBot\Adapters;
 
 use tomzx\HackBot\Core\Dispatcher;
 use tomzx\HackBot\Core\Helper;
+use tomzx\HackBot\Core\Logger;
 use tomzx\HackBot\Core\Request;
 
 class IRC
@@ -31,6 +32,7 @@ class IRC
 
 	public function shutdown() : void
 	{
+		$this->send('QUIT :Good bye bro!');
 		$this->out('BAI ;-;');
 	}
 
@@ -114,17 +116,12 @@ class IRC
 
 	private function in($text) : void
 	{
-		echo $this->debugPrefix().'[INPUT]  <<< '.trim($text).PHP_EOL;
+		Logger::log('[INPUT]  <<< '.trim($text));
 	}
 
 	private function out($text) : void
 	{
-		echo $this->debugPrefix().'[OUTPUT] <<< '.trim($text).PHP_EOL;
-	}
-
-	private function debugPrefix() : string
-	{
-		return '['.date('c').']['.Helper::formatBytes(memory_get_usage()).']';
+		Logger::log('[OUTPUT] <<< '.trim($text));
 	}
 
 	public function run() : void
