@@ -13,6 +13,7 @@ class Dispatcher
 			new \tomzx\HackBot\Responders\Commands\Alias(),
 			new \tomzx\HackBot\Responders\Commands\Help(),
 			new \tomzx\HackBot\Responders\Commands\Info(),
+			new \tomzx\HackBot\Responders\Listeners\URL(),
 		];
 
 		foreach ($responders as $responder) {
