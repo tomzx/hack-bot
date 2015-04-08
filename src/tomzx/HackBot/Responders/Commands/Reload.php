@@ -7,12 +7,14 @@ use tomzx\HackBot\Core\Responders\Command;
 
 return [
 	'type' => 'command',
-	'identifier' => 'alias',
-	'command' => 'alias',
-	'parameters' => '(?<new_command>[^ ]+)(?<command>[^ ]+)( (?<args>.*))?',
-	'help' => 'newcommand command <args>',
+	'identifier' => 'reload',
+	'command' => 'reload',
+	'parameters' => '(?<target>\S+|all)',
+	'help' => 'plugin|all',
 	'answer' => function (Dispatcher $dispatcher, array $data = [])
 	{
-		return 'alias';
+		$dispatcher->reloadResponders();
+		$targets = $data['target'];
+		return 'reload? '.$targets;
 	}
 ];

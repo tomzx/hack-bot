@@ -6,6 +6,10 @@ abstract class Responder
 {
 	protected Dispatcher $dispatcher;
 
+	protected string $identifier = null;
+
+	protected \closure $answerClosure;
+
 	protected string $help = null;
 
 	public function respond(?string $text) : ?string
@@ -23,7 +27,10 @@ abstract class Responder
 
 	protected abstract function getMatcher() : string;
 
-	public abstract function answer(array $data = []) : ?string;
+	public function answer(array $data = []) : ?string
+	{
+		return ($this->answerClosure)($this->dispatcher, $data);
+	}
 
 	public function help() : string
 	{
@@ -33,6 +40,30 @@ abstract class Responder
 	public function setDispatcher(Dispatcher $dispatcher) : this
 	{
 		$this->dispatcher = $dispatcher;
+
+		return $this;
+	}
+
+	public function getIdentifier() : string
+	{
+		return $this->identifier;
+	}
+
+	public function setIdentifier(string $identifier) : this
+	{
+		$this->identifier = $identifier;
+
+		return $this;
+	}
+
+	public function getAnswerClosure() : closure
+	{
+		return $this->answerClosure;
+	}
+
+	public function setAnswerClosure(\closure $answerClosure) : this
+	{
+		$this->answerClosure = $answerClosure;
 
 		return $this;
 	}
@@ -47,10 +78,5 @@ abstract class Responder
 		$this->help = $help;
 
 		return $this;
-	}
-
-	public function getIdentifier() : string
-	{
-		return get_class($this);
 	}
 }

@@ -2,13 +2,14 @@
 
 namespace tomzx\HackBot\Responders\Listeners;
 
+use tomzx\HackBot\Core\Dispatcher;
 use tomzx\HackBot\Core\Responders\Listener;
 
-class URL extends Listener
-{
-	protected string $matcher = '/(?<url>(https?):\/\/\S+)/';
-
-	public function answer(array $data = []) : ?string
+return [
+	'type' => 'listener',
+	'identifier' => 'url',
+	'matcher' => '/(?<url>(https?):\/\/\S+)/',
+	'answer' => function (Dispatcher $dispatcher, array $data = [])
 	{
 		// TODO: Limit request duration
 		$page = file_get_contents($data['url']);
@@ -21,4 +22,4 @@ class URL extends Listener
 			return trim($title);
 		}
 	}
-}
+];

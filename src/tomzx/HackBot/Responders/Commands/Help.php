@@ -2,15 +2,18 @@
 
 namespace tomzx\HackBot\Responders\Commands;
 
+use tomzx\HackBot\Core\Dispatcher;
 use tomzx\HackBot\Core\Responders\Command;
 
-class Help extends Command
-{
-	public string $command = 'help';
-
-	public function answer(array $data = []) : ?string
+return [
+	'type' => 'command',
+	'identifier' => 'help',
+	'command' => 'help',
+	'parameters' => '',
+	'help' => '',
+	'answer' => function (Dispatcher $dispatcher, array $data = [])
 	{
-		$responders = $this->dispatcher->getResponders();
-		return implode(',', array_keys($responders));
+		$responders = $dispatcher->getResponders();
+		return implode(', ', array_keys($responders));
 	}
-}
+];

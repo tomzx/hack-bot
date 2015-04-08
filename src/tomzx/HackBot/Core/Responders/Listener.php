@@ -4,7 +4,7 @@ namespace tomzx\HackBot\Core\Responders;
 
 use tomzx\HackBot\Core\Responder;
 
-abstract class Listener extends Responder
+class Listener extends Responder
 {
 	protected string $matcher = null;
 
@@ -18,5 +18,14 @@ abstract class Listener extends Responder
 		$this->matcher = $matcher;
 
 		return $this;
+	}
+
+	public static function fromDefinition(array $definition) : this
+	{
+		$listener = new self;
+		$listener->setIdentifier($definition['identifier']);
+		$listener->setMatcher($definition['matcher']);
+		$listener->setAnswerClosure($definition['answer']);
+		return $listener;
 	}
 }

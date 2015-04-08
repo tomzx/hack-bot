@@ -4,7 +4,7 @@ namespace tomzx\HackBot\Core\Responders;
 
 use tomzx\HackBot\Core\Responder;
 
-abstract class Command extends Responder
+class Command extends Responder
 {
 	protected string $commandMatcher = '#';
 
@@ -75,5 +75,16 @@ abstract class Command extends Responder
 		$this->parameters = $parameters;
 
 		return $this;
+	}
+
+	public static function fromDefinition(array $definition) : this
+	{
+		$command = new self;
+		$command->setIdentifier($definition['identifier']);
+		$command->setCommand($definition['command']);
+		$command->setParameters($definition['parameters']);
+		$command->setHelp($definition['help']);
+		$command->setAnswerClosure($definition['answer']);
+		return $command;
 	}
 }

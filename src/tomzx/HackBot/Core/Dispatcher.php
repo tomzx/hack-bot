@@ -2,21 +2,32 @@
 
 namespace tomzx\HackBot\Core;
 
+use tomzx\HackBot\Core\Logger;
+use tomzx\HackBot\Core\Responders\Command;
+use tomzx\HackBot\Core\Responders\Listener;
+
 class Dispatcher
 {
 	protected array $responders = [];
 
 	public function initializeResponders() : void
 	{
-		// TODO: Dynamically load responders
-		$responders = [
-			new \tomzx\HackBot\Responders\Commands\Alias(),
-			new \tomzx\HackBot\Responders\Commands\Help(),
-			new \tomzx\HackBot\Responders\Commands\Info(),
-			new \tomzx\HackBot\Responders\Listeners\URL(),
-		];
+		// TODO: Support specifying paths where to find responders
+		$baseDir = realpath(__DIR__.'/../Responders');
+		$responders = glob($baseDir.'/*/*.php');
 
 		foreach ($responders as $responder) {
+			// TODO: Hack until hhvm supports dynamic include (https://github.com/facebook/hhvm/issues/1447)
+			$responderDefinition = eval(str_replace('<?hh // strict', '', file_get_contents($responder)));
+			if ($responderDefinition['type'] === 'listener') {
+				$responder = Listener::fromDefinition($responderDefinition);
+			} elseif ($responderDefinition['type'] === 'command') {
+				$responder = Command::fromDefinition($responderDefinition);
+			} else {
+				Logger::log('Unknown responder type for file '.$responder.'. Skipped.');
+				continue;
+			}
+
 			$this->registerResponder($responder);
 		}
 	}
@@ -26,11 +37,18 @@ class Dispatcher
 		$responder->setDispatcher($this);
 		$key = $responder->getIdentifier();
 		$this->responders[$key] = $responder;
+		Logger::log('Registered responder '.$responder->getIdentifier());
 	}
 
 	public function getResponders() : array
 	{
 		return $this->responders;
+	}
+
+	public function reloadResponders() : void
+	{
+		$this->responders = [];
+		$this->initializeResponders();
 	}
 
 	public function dispatch(Request $request) : Response
