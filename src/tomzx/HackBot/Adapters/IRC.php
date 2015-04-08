@@ -71,8 +71,8 @@ class IRC
 		while($data = fgets($this->socket)) {
 			$this->out($data);
 
-			$parts = explode(' :', $data, 2);
-			$trailing = count($parts) > 1 ? $parts[1] : null;
+			$parts = explode(' :', $data, 2) + [1 => null];
+			$trailing = $parts[1];
 			$parts = explode(' ', $parts[0]);
 			if ($parts[0] === 'PING') {
 				$this->send('PONG '.$trailing);

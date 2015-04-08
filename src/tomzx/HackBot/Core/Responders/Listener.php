@@ -8,7 +8,7 @@ class Listener extends Responder
 {
 	protected string $matcher = null;
 
-	protected function getMatcher()
+	public function getMatcher()
 	{
 		return $this->matcher;
 	}
@@ -25,7 +25,7 @@ class Listener extends Responder
 		$listener = new self;
 		$listener->setIdentifier($definition['identifier']);
 		$listener->setMatcher($definition['matcher']);
-		$listener->setAnswerClosure($definition['answer']);
+		$listener->setAnswer($definition['answer']);
 		return $listener;
 	}
 }

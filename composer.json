@@ -33,7 +33,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"tomzx\\HackBot\\Test\\": "tests/tomzx/HackBot"
+			"tomzx\\HackBot\\Tests\\": "tests/tomzx/HackBot"
 		}
 	},
 	"extra": {

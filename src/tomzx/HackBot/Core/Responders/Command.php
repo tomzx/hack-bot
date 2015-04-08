@@ -84,7 +84,7 @@ class Command extends Responder
 		$command->setCommand($definition['command']);
 		$command->setParameters($definition['parameters']);
 		$command->setHelp($definition['help']);
-		$command->setAnswerClosure($definition['answer']);
+		$command->setAnswer($definition['answer']);
 		return $command;
 	}
 }

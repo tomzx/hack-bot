@@ -1,10 +1,11 @@
 <?hh // strict
 
-namespace tests\tomzx\HackBot\Responders\Listeners;
+namespace tomzx\HackBot\Tests\Responders\Listeners;
 
 use tomzx\HackBot\Core\Helper;
+use tomzx\HackBot\Tests\TestCase;
 
-class HelperTest extends \PHPUnit_Framework_TestCase
+class HelperTest extends TestCase
 {
 	/**
 	 * @dataProvider formatBytes

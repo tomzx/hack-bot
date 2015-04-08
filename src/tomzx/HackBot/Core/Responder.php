@@ -8,9 +8,14 @@ abstract class Responder
 
 	protected string $identifier = null;
 
-	protected \closure $answerClosure;
+	protected callable $answer;
 
 	protected string $help = null;
+
+	public function __construct()
+	{
+		$this->answer = function(Dispatcher $dispatcher, array $data) {};
+	}
 
 	public function respond(?string $text) : ?string
 	{
@@ -29,7 +34,7 @@ abstract class Responder
 
 	public function answer(array $data = []) : ?string
 	{
-		return ($this->answerClosure)($this->dispatcher, $data);
+		return ($this->answer)($this->dispatcher, $data);
 	}
 
 	public function help() : string
@@ -44,7 +49,7 @@ abstract class Responder
 		return $this;
 	}
 
-	public function getIdentifier() : string
+	public function getIdentifier() : ?string
 	{
 		return $this->identifier;
 	}
@@ -56,19 +61,19 @@ abstract class Responder
 		return $this;
 	}
 
-	public function getAnswerClosure() : closure
+	public function getAnswer() : callable
 	{
-		return $this->answerClosure;
+		return $this->answer;
 	}
 
-	public function setAnswerClosure(\closure $answerClosure) : this
+	public function setAnswer(callable $answer) : this
 	{
-		$this->answerClosure = $answerClosure;
+		$this->answer = $answer;
 
 		return $this;
 	}
 
-	public function getHelp() : string
+	public function getHelp() : ?string
 	{
 		return $this->help;
 	}

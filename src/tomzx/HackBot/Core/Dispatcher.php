@@ -37,7 +37,7 @@ class Dispatcher
 		$responder->setDispatcher($this);
 		$key = $responder->getIdentifier();
 		$this->responders[$key] = $responder;
-		Logger::log('Registered responder '.$responder->getIdentifier());
+		Logger::log('Registered responder '.$key);
 	}
 
 	public function getResponders() : array

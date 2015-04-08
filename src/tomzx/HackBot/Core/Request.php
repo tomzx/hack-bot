@@ -13,7 +13,7 @@ class Request
 		return $this->meta;
 	}
 
-	public function setMeta(array $meta = []) : this
+	public function setMeta(array $meta) : this
 	{
 		$this->meta = $meta;
 
