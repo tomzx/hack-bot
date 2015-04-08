@@ -10,15 +10,22 @@ class Dispatcher
 {
 	protected array $responders = [];
 
-	public function initializeResponders() : void
+	public function initializeResponders(array $toInitialize = []) : array
 	{
 		// TODO: Support specifying paths where to find responders
 		$baseDir = realpath(__DIR__.'/../Responders');
 		$responders = glob($baseDir.'/*/*.php');
 
+		$initializedResponders = [];
 		foreach ($responders as $responder) {
 			// TODO: Hack until hhvm supports dynamic include (https://github.com/facebook/hhvm/issues/1447)
 			$responderDefinition = eval(str_replace('<?hh // strict', '', file_get_contents($responder)));
+
+			// Skip responder if it is not to be initialized.
+			if ( ! empty($toInitialize) && ! in_array($responderDefinition['identifier'], $toInitialize)) {
+				continue;
+			}
+
 			if ($responderDefinition['type'] === 'listener') {
 				$responder = Listener::fromDefinition($responderDefinition);
 			} elseif ($responderDefinition['type'] === 'command') {
@@ -29,7 +36,10 @@ class Dispatcher
 			}
 
 			$this->registerResponder($responder);
+			$initializedResponders[] = $responder;
 		}
+
+		return $initializedResponders;
 	}
 
 	public function registerResponder(Responder $responder) : void
@@ -45,25 +55,35 @@ class Dispatcher
 		return $this->responders;
 	}
 
-	public function reloadResponders() : void
+	public function reloadResponders(array $toReload = []) : array
 	{
-		$this->responders = [];
-		$this->initializeResponders();
+		foreach ($toReload as $responder) {
+			if (isset($this->responders[$responder])) {
+				unset($this->responder[$responder]);
+				Logger::log('Unloaded responder '.$responder);
+			}
+		}
+		return $this->initializeResponders($toReload);
 	}
 
-	public function dispatch(Request $request) : Response
+	public function reloadResponder($identifier) : array
 	{
+		return $this->reloadResponders([$identifier]);
+	}
+
+	public function dispatch(Request $request) : ResponseBag
+	{
+		$responseBag = new ResponseBag();
 		// Check if any responder can respond
 		foreach ($this->responders as $responder) {
-			$response = $responder->respond($request->getRequest());
+			$response = $responder->respond($request);
 			if ($response) {
 				// TODO: Support returning multiple responses (yield?)
-				return $this->buildResponse($request, $response);
+				$responseBag->add($this->buildResponse($request, $response));
 			}
 		}
 
-		// Return response to caller
-		return $this->buildResponse($request, null);
+		return $responseBag;
 	}
 
 	protected function buildResponse(Request $request, ?string $response) : Response

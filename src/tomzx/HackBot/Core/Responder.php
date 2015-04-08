@@ -12,22 +12,30 @@ abstract class Responder
 
 	protected string $help = null;
 
-	public function __construct()
+	public function __construct() : void
 	{
 		$this->answer = function(Dispatcher $dispatcher, array $data) {};
 	}
 
-	public function respond(?string $text) : ?string
+	public function respond(Request $request) : ?string
 	{
-		if ($text === null) {
-			return null;
-		}
-
-		if (preg_match($this->getMatcher(), $text, $matches)) {
-			return $this->answer($matches);
+		if (preg_match($this->getMatcher(), $request->getRequest(), $matches)) {
+			$matches = $this->cleanMatches($matches);
+			$data = ['meta' => $request->getMeta()] + $matches;
+			return $this->answer($data);
 		}
 
 		return null;
+	}
+
+	private function cleanMatches(array $matches) : array
+	{
+		foreach($matches as $k => $v) {
+			if(is_int($k)) {
+				unset($matches[$k]);
+			}
+		}
+		return $matches;
 	}
 
 	protected abstract function getMatcher() : string;

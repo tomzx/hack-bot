@@ -17,7 +17,7 @@ class IRC
 
 	const ENDLINE = "\r\n";
 
-	public function __construct(array $configuration) : this
+	public function __construct(array $configuration) : void
 	{
 		$this->configuration = $configuration;
 		register_shutdown_function([$this, 'shutdown']);
@@ -85,21 +85,25 @@ class IRC
 			if ($parts[1] === 'PRIVMSG') {
 				$query = $trailing;
 				$to = $parts[2];
+				$reply_to = $this->isChannel($to) ? $to : $nick;
 				$meta = [
-					'from' => $from,
-					'command' => $parts[1],
-					'sent_to' => $parts[2],
-					'reply_to' => $this->isChannel($to) ? $to : $nick,
-					'args' => explode(' ', $query),
+					'irc' => [
+						'from' => $from,
+						'nick' => $nick,
+						'command' => $parts[1],
+						'sent_to' => $parts[2],
+						'reply_to' => $reply_to,
+						'args' => explode(' ', $query),
+					]
 				];
 
 				$request = new Request();
 				$request->setRequest($query);
 				$request->setMeta($meta);
 				if ($this->dispatcher) {
-					$response = $this->dispatcher->dispatch($request);
-					if ($response->hasResponse()) {
-						$this->send('PRIVMSG '.$response->getMeta()['reply_to'].' :'.$response->getResponse());
+					$responseBag = $this->dispatcher->dispatch($request);
+					foreach ($responseBag->all() as $response) {
+						$this->send('PRIVMSG '.$reply_to.' :'.$response->getResponse());
 					}
 				}
 			}
@@ -116,7 +120,7 @@ class IRC
 
 	private function in($text) : void
 	{
-		Logger::log('[INPUT]  <<< '.trim($text));
+		Logger::log('[INPUT]  >>> '.trim($text));
 	}
 
 	private function out($text) : void

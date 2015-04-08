@@ -24,13 +24,17 @@ class Shell
 				break;
 			}
 
+			echo 'QUERY WAS: '.$query.PHP_EOL;
+
 			$request = new Request();
 			$request->setRequest($query);
 
-			$response = $this->dispatcher->dispatch($request);
-			echo 'QUERY WAS: '.$query.PHP_EOL;
-			var_dump($response->hasResponse());
-			var_dump($response->getResponse());
+			$responseBag = $this->dispatcher->dispatch($request);
+			foreach ($responseBag->all() as $index => $response) {
+				echo 'Reply #'.$index.PHP_EOL;
+				var_dump($response->hasResponse());
+				var_dump($response->getResponse());
+			}
 		}
 	}
 }

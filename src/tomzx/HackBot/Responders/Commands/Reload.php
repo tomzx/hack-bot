@@ -13,8 +13,10 @@ return [
 	'help' => 'plugin|all',
 	'answer' => function (Dispatcher $dispatcher, array $data = [])
 	{
-		$dispatcher->reloadResponders();
-		$targets = $data['target'];
-		return 'reload? '.$targets;
+		$targets = $data['target'] === 'all' ? [] : explode(' ', $data['target']);
+		$reloadedResponders = $dispatcher->reloadResponders($targets);
+		$reloadedResponders = array_map(function($responder) { return $responder->getIdentifier(); }, $reloadedResponders);
+		$reloadedResponders = ! empty($reloadedResponders) ? 'reloaded '.implode(', ', $reloadedResponders) : 'Nothing reloaded';
+		return $reloadedResponders;
 	}
 ];

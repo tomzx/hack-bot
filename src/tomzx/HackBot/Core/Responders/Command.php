@@ -2,6 +2,7 @@
 
 namespace tomzx\HackBot\Core\Responders;
 
+use tomzx\HackBot\Core\Request;
 use tomzx\HackBot\Core\Responder;
 
 class Command extends Responder
@@ -12,13 +13,13 @@ class Command extends Responder
 
 	protected string $parameters = null;
 
-	public function respond(?string $text) : ?string
+	public function respond(Request $request) : ?string
 	{
-		if ($response = parent::respond($text)) {
+		if ($response = parent::respond($request)) {
 			return $response;
 		}
 
-		if (preg_match('/^'.$this->getMatcherCommand().'/', $text)) {
+		if (preg_match('/^'.$this->getMatcherCommand().'/', $request->getRequest())) {
 			return $this->help();
 		}
 

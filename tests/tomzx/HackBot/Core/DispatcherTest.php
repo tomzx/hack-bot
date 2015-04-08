@@ -42,14 +42,7 @@ class DispatcherTest extends TestCase
 	{
 		$request = m::mock('tomzx\HackBot\Core\Request');
 
-		$meta = [
-			'a' => 'b',
-		];
-
-		$request->shouldReceive('getMeta')->once()->andReturn($meta);
-
-		$actual = $this->dispatcher->dispatch($request);
-		$this->assertSame($meta, $actual->getMeta());
-		$this->assertSame(null, $actual->getResponse());
+		$responseBag = $this->dispatcher->dispatch($request);
+		$this->assertEmpty($responseBag->all());));
 	}
 }
