@@ -8,7 +8,7 @@ class Info extends Command
 {
 	public string $command = 'info';
 
-	public function answer(array $data = []) : string
+	public function answer(array $data = []) : ?string
 	{
 		return 'INFO';
 	}

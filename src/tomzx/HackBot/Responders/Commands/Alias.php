@@ -12,7 +12,7 @@ class Alias extends Command
 
 	public string $help = 'command <args>';
 
-	public function answer(array $data = []) : string
+	public function answer(array $data = []) : ?string
 	{
 		return 'ALIAS';
 	}

@@ -8,7 +8,7 @@ class Help extends Command
 {
 	public string $command = 'help';
 
-	public function answer(array $data = []) : string
+	public function answer(array $data = []) : ?string
 	{
 		$responders = $this->dispatcher->getResponders();
 		return implode(',', array_keys($responders));

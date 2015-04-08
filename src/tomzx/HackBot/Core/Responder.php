@@ -23,7 +23,7 @@ abstract class Responder
 
 	protected abstract function getMatcher() : string;
 
-	public abstract function answer(array $data = []) : string;
+	public abstract function answer(array $data = []) : ?string;
 
 	public function help() : string
 	{
