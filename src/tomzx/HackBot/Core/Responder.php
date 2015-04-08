@@ -17,7 +17,7 @@ abstract class Responder
 		$this->answer = function(Dispatcher $dispatcher, array $data) {};
 	}
 
-	public function respond(Request $request) : ?string
+	public function respond(Request $request) : array
 	{
 		if (preg_match($this->getMatcher(), $request->getRequest(), $matches)) {
 			$matches = $this->cleanMatches($matches);
@@ -25,7 +25,7 @@ abstract class Responder
 			return $this->answer($data);
 		}
 
-		return null;
+		return [];
 	}
 
 	private function cleanMatches(array $matches) : array
@@ -40,9 +40,9 @@ abstract class Responder
 
 	protected abstract function getMatcher() : string;
 
-	public function answer(array $data = []) : ?string
+	public function answer(array $data = []) : array
 	{
-		return ($this->answer)($this->dispatcher, $data);
+		return (array)($this->answer)($this->dispatcher, $data);
 	}
 
 	public function help() : string

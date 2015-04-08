@@ -21,6 +21,11 @@ class Dispatcher
 			// TODO: Hack until hhvm supports dynamic include (https://github.com/facebook/hhvm/issues/1447)
 			$responderDefinition = eval(str_replace('<?hh // strict', '', file_get_contents($responder)));
 
+			if ( ! $responderDefinition) {
+				Logger::log('Error while parsing responder definition file '.$responder.'. Skipped.');
+				continue;
+			}
+
 			// Skip responder if it is not to be initialized.
 			if ( ! empty($toInitialize) && ! in_array($responderDefinition['identifier'], $toInitialize)) {
 				continue;
@@ -76,9 +81,11 @@ class Dispatcher
 		$responseBag = new ResponseBag();
 		// Check if any responder can respond
 		foreach ($this->responders as $responder) {
-			$response = $responder->respond($request);
-			if ($response) {
-				// TODO: Support returning multiple responses (yield?)
+			$responses = $responder->respond($request);
+			foreach ($responses as $response) {
+				if (empty($response)) {
+					continue;
+				}
 				$responseBag->add($this->buildResponse($request, $response));
 			}
 		}

@@ -13,31 +13,34 @@ class Command extends Responder
 
 	protected string $parameters = null;
 
-	public function respond(Request $request) : ?string
+	protected string $modifiers = null;
+
+	public function respond(Request $request) : array
 	{
 		if ($response = parent::respond($request)) {
 			return $response;
 		}
 
 		if (preg_match('/^'.$this->getMatcherCommand().'/', $request->getRequest())) {
-			return $this->help();
+			return [$this->help()];
 		}
 
-		return null;
+		return [];
 	}
 
-	public function help()
+	public function help() : string
 	{
 		return 'Usage: '.$this->getMatcherCommand().' '.$this->getHelp();
 	}
 
-	protected function getMatcher()
+	protected function getMatcher() : string
 	{
 		$command = $this->getMatcherCommand();
-		return $this->parameters ? '/^'.$command.' '.$this->parameters.'/' : '/^'.$command.'/';
+		$command = $this->parameters ? $command.' '.$this->parameters : $command;
+		return '/^'.$command.'/'.$this->modifiers;
 	}
 
-	protected function getMatcherCommand()
+	protected function getMatcherCommand() : string
 	{
 		return $this->commandMatcher.$this->command;
 	}
@@ -78,12 +81,34 @@ class Command extends Responder
 		return $this;
 	}
 
+	public function getModifiers() : string
+	{
+		return $this->modifiers;
+	}
+
+	public function setModifiers(string $modifiers) : this
+	{
+		$this->modifiers = $modifiers;
+
+		return $this;
+	}
+
 	public static function fromDefinition(array $definition) : this
 	{
+		$definition += [
+			'identifier' => null,
+			'command' => null,
+			'parameters' => '',
+			'modifiers' => '',
+			'help' => null,
+			'answer' => null,
+		];
+
 		$command = new self;
 		$command->setIdentifier($definition['identifier']);
 		$command->setCommand($definition['command']);
 		$command->setParameters($definition['parameters']);
+		$command->setModifiers($definition['modifiers']);
 		$command->setHelp($definition['help']);
 		$command->setAnswer($definition['answer']);
 		return $command;
