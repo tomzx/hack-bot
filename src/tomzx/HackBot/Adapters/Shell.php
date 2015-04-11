@@ -19,10 +19,12 @@ class Shell
 	public function run()
 	{
 		while(true) {
-			$query = trim(fgets(STDIN));
+			$query = trim(readline('> '));
 			if ($query === 'exit') {
 				break;
 			}
+
+			readline_add_history($query);
 
 			echo 'QUERY WAS: '.$query.PHP_EOL;
 
