@@ -19,7 +19,7 @@ return [
 
 		if (preg_match('/<title>(?<title>.*)<\/title>/siU', $page, $matches)) {
 			$title = preg_replace('/\s+/', ' ', $matches['title']);
-			return trim($title);
+			return trim(html_entity_decode($title));
 		}
 	}
 ];
