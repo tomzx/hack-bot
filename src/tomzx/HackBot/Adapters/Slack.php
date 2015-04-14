@@ -2,7 +2,9 @@
 
 namespace tomzx\HackBot\Adapters;
 
-class Slack
+use tomzx\HackBot\Core\Adapter;
+
+class Slack extends Adapter
 {
 
 }

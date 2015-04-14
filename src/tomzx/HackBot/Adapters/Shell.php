@@ -2,20 +2,12 @@
 
 namespace tomzx\HackBot\Adapters;
 
+use tomzx\HackBot\Core\Adapter;
 use tomzx\HackBot\Core\Dispatcher;
 use tomzx\HackBot\Core\Request;
 
-class Shell
+class Shell extends Adapter
 {
-	protected Dispatcher $dispatcher = null;
-
-	public function setDispatcher(Dispatcher $dispatcher) : this
-	{
-		$this->dispatcher = $dispatcher;
-
-		return $this;
-	}
-
 	public function run()
 	{
 		while(true) {

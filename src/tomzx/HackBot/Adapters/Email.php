@@ -2,7 +2,9 @@
 
 namespace tomzx\HackBot\Adapters;
 
-class Email
+use tomzx\HackBot\Core\Adapter;
+
+class Email extends Adapter
 {
 
 }

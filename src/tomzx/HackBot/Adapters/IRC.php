@@ -2,18 +2,17 @@
 
 namespace tomzx\HackBot\Adapters;
 
+use tomzx\HackBot\Core\Adapter;
 use tomzx\HackBot\Core\Dispatcher;
 use tomzx\HackBot\Core\Helper;
 use tomzx\HackBot\Core\Logger;
 use tomzx\HackBot\Core\Request;
 
-class IRC
+class IRC extends Adapter
 {
 	protected resource $socket = null;
 
 	protected array $configuration = [];
-
-	protected Dispatcher $dispatcher = null;
 
 	const ENDLINE = "\r\n";
 
@@ -21,13 +20,6 @@ class IRC
 	{
 		$this->configuration = $configuration;
 		register_shutdown_function([$this, 'shutdown']);
-	}
-
-	public function setDispatcher(Dispatcher $dispatcher) : this
-	{
-		$this->dispatcher = $dispatcher;
-
-		return $this;
 	}
 
 	public function shutdown() : void
