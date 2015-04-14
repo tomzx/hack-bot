@@ -22,7 +22,7 @@ class Dispatcher
 			$responderDefinition = eval(str_replace('<?hh // strict', '', file_get_contents($responder)));
 
 			if ( ! $responderDefinition) {
-				Logger::log('Error while parsing responder definition file '.$responder.'. Skipped.');
+				Logger::debug('Error while parsing responder definition file '.$responder.'. Skipped.');
 				continue;
 			}
 
@@ -36,7 +36,7 @@ class Dispatcher
 			} elseif ($responderDefinition['type'] === 'command') {
 				$responder = Command::fromDefinition($responderDefinition);
 			} else {
-				Logger::log('Unknown responder type for file '.$responder.'. Skipped.');
+				Logger::debug('Unknown responder type for file '.$responder.'. Skipped.');
 				continue;
 			}
 
@@ -52,7 +52,7 @@ class Dispatcher
 		$responder->setDispatcher($this);
 		$key = $responder->getIdentifier();
 		$this->responders[$key] = $responder;
-		Logger::log('Registered responder '.$key);
+		Logger::info('Registered responder '.$key);
 	}
 
 	public function getResponders() : array
@@ -65,7 +65,7 @@ class Dispatcher
 		foreach ($toReload as $responder) {
 			if (isset($this->responders[$responder])) {
 				unset($this->responder[$responder]);
-				Logger::log('Unloaded responder '.$responder);
+				Logger::debug('Unloaded responder '.$responder);
 			}
 		}
 		return $this->initializeResponders($toReload);

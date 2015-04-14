@@ -120,12 +120,12 @@ class IRC
 
 	private function in($text) : void
 	{
-		Logger::log('[INPUT]  >>> '.trim($text));
+		Logger::info('[INPUT]  >>> '.trim($text));
 	}
 
 	private function out($text) : void
 	{
-		Logger::log('[OUTPUT] <<< '.trim($text));
+		Logger::info('[OUTPUT] <<< '.trim($text));
 	}
 
 	public function run() : void
