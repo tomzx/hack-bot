@@ -7,7 +7,6 @@ use tomzx\HackBot\Core\Request;
 
 require __DIR__.'/../vendor/autoload.php';
 
-
 // TODO: Move to a logger which doesn't echo
 Logger::setEnabled(false);
 

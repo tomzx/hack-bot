@@ -4,7 +4,7 @@ use tomzx\HackBot\Adapters\IRC;
 use tomzx\HackBot\Core\Dispatcher;
 use tomzx\HackBot\Core\Request;
 
-require 'vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 $configuration = [
 	'server' => 'irc.freenode.net',
