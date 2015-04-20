@@ -10,6 +10,15 @@ class Shell extends Adapter
 {
 	public function run()
 	{
+		pcntl_signal(SIGINT, [$this, 'interrupt'], false);
+		register_shutdown_function([$this, 'shutdown']);
+
+		$dataDirectory = 'data';
+		$dataFile = $dataDirectory.'/shell.readline';
+		if (file_exists($dataFile)) {
+			readline_read_history($dataFile);
+		}
+
 		while(true) {
 			$query = trim(readline('> '));
 			if ($query === 'exit') {
@@ -33,5 +42,17 @@ class Shell extends Adapter
 				var_dump($response->getResponse());
 			}
 		}
+	}
+
+	public function interrupt()
+	{
+		exit;
+	}
+
+	public function shutdown()
+	{
+		$dataDirectory = 'data';
+		$dataFile = $dataDirectory.'/shell.readline';
+		readline_write_history($dataFile);
 	}
 }
