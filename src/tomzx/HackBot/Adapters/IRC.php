@@ -14,6 +14,8 @@ class IRC extends Adapter
 
 	protected array $configuration = [];
 
+	protected float $lastMessageTimestamp = 0;
+
 	const ENDLINE = "\r\n";
 
 	public function __construct(array $configuration) : void
@@ -113,6 +115,18 @@ class IRC extends Adapter
 		$message = implode(' ', $args).self::ENDLINE;
 		$this->in($message);
 		fputs($this->socket, $message);
+
+		$this->delaySend();
+	}
+
+	private function delaySend() : void
+	{
+		$now = microtime(true);
+		$toSleep = $this->configuration['delay'] - ($now - $this->lastMessageTimestamp);
+		if ($toSleep > 0) {
+			usleep($toSleep*1e6);
+		}
+		$this->lastMessageTimestamp = $now;
 	}
 
 	private function in($text) : void

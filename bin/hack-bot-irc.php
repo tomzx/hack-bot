@@ -14,6 +14,7 @@ $configuration = [
 	'password' => '',
 	'channels' => [
 	],
+	'delay' => 0.5,
 ];
 
 $dispatcher = new Dispatcher();
