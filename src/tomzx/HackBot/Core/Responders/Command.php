@@ -21,7 +21,7 @@ class Command extends Responder
 			return $response;
 		}
 
-		if (preg_match('/^'.$this->getMatcherCommand().'/', $request->getRequest())) {
+		if (preg_match($this->getPartialMatcher(), $request->getRequest())) {
 			return [$this->help()];
 		}
 
@@ -33,11 +33,16 @@ class Command extends Responder
 		return 'Usage: '.$this->getMatcherCommand().' '.$this->getHelp();
 	}
 
+	protected function getPartialMatcher() : string
+	{
+		return '/^'.$this->getMatcherCommand().'( |$)/';
+	}
+
 	protected function getMatcher() : string
 	{
 		$command = $this->getMatcherCommand();
 		$command = $this->parameters ? $command.' '.$this->parameters : $command;
-		return '/^'.$command.'/'.$this->modifiers;
+		return '/^'.$command.'$/'.$this->modifiers;
 	}
 
 	protected function getMatcherCommand() : string
