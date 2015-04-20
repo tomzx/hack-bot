@@ -39,7 +39,7 @@ return [
 		$title = $firstResult->filter('a')->first();
 		$title = $title->count() ? $title->text() : 'n/a';
 		$description = $firstResult->filter('.st')->first();
-		$description = $description->count() ? $description->text() : 'n/a';
+		$description = $description->count() ? str_replace("\n", '', $description->text()) : 'n/a';
 
 		return $title.' ['.$url.'] ('.$resultStats.')'.PHP_EOL.$description;
 	}
