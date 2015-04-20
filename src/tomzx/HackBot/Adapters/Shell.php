@@ -18,12 +18,15 @@ class Shell extends Adapter
 
 			readline_add_history($query);
 
-			echo 'QUERY WAS: '.$query.PHP_EOL;
+			echo 'Initial query: '.$query.PHP_EOL;
 
 			$request = new Request();
 			$request->setRequest($query);
 
 			$responseBag = $this->dispatcher->dispatch($request);
+
+			echo 'Processed query: '.$request->getRequest().PHP_EOL;
+
 			foreach ($responseBag->all() as $index => $response) {
 				echo 'Reply #'.$index.PHP_EOL;
 				var_dump($response->hasResponse());

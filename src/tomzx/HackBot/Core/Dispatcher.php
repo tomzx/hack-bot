@@ -78,6 +78,9 @@ class Dispatcher
 
 	public function dispatch(Request $request) : ResponseBag
 	{
+		// Preprocess request with aliases
+		$this->preprocessAliases($request);
+
 		$responseBag = new ResponseBag();
 		// Check if any responder can respond
 		foreach ($this->responders as $responder) {
@@ -91,6 +94,29 @@ class Dispatcher
 		}
 
 		return $responseBag;
+	}
+
+	// TODO: Support multi-level/recursive alias resolution
+	protected function preprocessAliases(Request $request)
+	{
+		$dataDirectory = 'data';
+		$dataFile = $dataDirectory.'/alias.json';
+
+		$aliases = [];
+		// TODO: Have a caching system so we don't read the file every time?
+		if (file_exists($dataFile)) {
+			$aliases = json_decode(file_get_contents($dataFile), true);
+		}
+
+		$currentRequest = $request->getRequest();
+		foreach ($aliases as $command => $replacement) {
+			// TODO: THIS DOES NOT BELONG HERE, WE SHOULDN'T KNOW THE COMMANDMATCHER...
+			if (preg_match('/#'.$command.'( |$)/', $currentRequest)) {
+				$newRequest = str_replace($command, $replacement, $currentRequest);
+				$request->setRequest($newRequest);
+				return;
+			}
+		}
 	}
 
 	protected function buildResponse(Request $request, ?string $response) : Response
