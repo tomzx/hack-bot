@@ -64,7 +64,7 @@ class IRC extends Adapter
 			$this->out($data);
 
 			$parts = explode(' :', $data, 2) + [1 => null];
-			$trailing = $parts[1];
+			$trailing = trim($parts[1]);
 			$parts = explode(' ', $parts[0]);
 			if ($parts[0] === 'PING') {
 				$this->send('PONG '.$trailing);
