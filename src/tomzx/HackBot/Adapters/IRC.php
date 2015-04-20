@@ -95,7 +95,12 @@ class IRC extends Adapter
 				if ($this->dispatcher) {
 					$responseBag = $this->dispatcher->dispatch($request);
 					foreach ($responseBag->all() as $response) {
-						$this->send('PRIVMSG '.$reply_to.' :'.$response->getResponse());
+						$lines = explode(PHP_EOL, $response->getResponse());
+						foreach ($lines as $line) {
+							if ($line) {
+								$this->send('PRIVMSG '.$reply_to.' :'.$line);
+							}
+						}
 					}
 				}
 			}
