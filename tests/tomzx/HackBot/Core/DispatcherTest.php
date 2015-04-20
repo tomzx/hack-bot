@@ -42,6 +42,8 @@ class DispatcherTest extends TestCase
 	{
 		$request = m::mock('tomzx\HackBot\Core\Request');
 
+		$request->shouldReceive('getRequest')->andReturn('test');
+
 		$responseBag = $this->dispatcher->dispatch($request);
 		$this->assertEmpty($responseBag->all());
 	}
