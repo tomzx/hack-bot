@@ -7,6 +7,9 @@ use tomzx\HackBot\Core\Request;
 
 require __DIR__.'/../vendor/autoload.php';
 
+// TODO: Provide a centralized location for code to refer to paths such as the data folder
+chdir(__DIR__.'/..');
+
 // TODO: Move to a logger which doesn't echo
 Logger::setEnabled(false);
 
