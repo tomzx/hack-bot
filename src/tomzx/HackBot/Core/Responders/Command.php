@@ -3,6 +3,7 @@
 namespace tomzx\HackBot\Core\Responders;
 
 use tomzx\HackBot\Core\Request;
+use tomzx\HackBot\Core\Response;
 use tomzx\HackBot\Core\Responder;
 
 class Command extends Responder
@@ -15,22 +16,27 @@ class Command extends Responder
 
 	protected string $modifiers = null;
 
-	public function respond(Request $request) : array
+	public function respond(Request $request) : ?Response
 	{
 		if ($response = parent::respond($request)) {
 			return $response;
 		}
 
-		if (preg_match($this->getPartialMatcher(), $request->getRequest())) {
-			return [$this->help()];
+		if (! $this->getMatches($request) && $this->hasPartialMatch($request)) {
+			return $this->buildResponse($request, $this->help());
 		}
 
-		return [];
+		return null;
 	}
 
 	public function help() : string
 	{
-		return 'Usage: '.$this->getMatcherCommand().' '.$this->getHelp();
+		return trim('Usage: '.$this->getMatcherCommand().' '.$this->getHelp());
+	}
+
+	protected function hasPartialMatch(Request $request) : bool
+	{
+		return (bool)preg_match($this->getPartialMatcher(), $request->getRequest());
 	}
 
 	protected function getPartialMatcher() : string

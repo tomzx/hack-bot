@@ -17,15 +17,39 @@ abstract class Responder
 		$this->answer = function(Dispatcher $dispatcher, array $data) {};
 	}
 
-	public function respond(Request $request) : array
+	public function respond(Request $request) : ?Response
 	{
-		if (preg_match($this->getMatcher(), $request->getRequest(), $matches)) {
-			$matches = $this->cleanMatches($matches);
+		if ($matches = $this->getMatches($request)) {
 			$data = ['meta' => $request->getMeta()] + $matches;
-			return $this->answer($data);
+			$response = $this->answer($data);
+			$response = implode(PHP_EOL, $response);
+
+			Logger::debug($this->getIdentifier().': Processing...');
+
+			if ( ! $response) {
+				return null;
+			}
+
+			Logger::debug('Responder '.$this->getIdentifier().' responded with "'.$response.'".');
+			return $this->buildResponse($request, $response);
 		}
 
-		return [];
+		return null;
+	}
+
+	public function getMatches(Request $request) : array
+	{
+		preg_match($this->getMatcher(), $request->getRequest(), $matches);
+		$matches = $this->cleanMatches($matches);
+		return $matches;
+	}
+
+	protected function buildResponse(Request $request, ?string $response) : Response
+	{
+		$reply = new Response();
+		$reply->setMeta($request->getMeta());
+		$reply->setResponse($response);
+		return $reply;
 	}
 
 	private function cleanMatches(array $matches) : array

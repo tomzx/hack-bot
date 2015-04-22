@@ -84,13 +84,11 @@ class Dispatcher
 		$responseBag = new ResponseBag();
 		// Check if any responder can respond
 		foreach ($this->responders as $responder) {
-			$responses = $responder->respond($request);
-			foreach ($responses as $response) {
-				if (empty($response)) {
-					continue;
-				}
-				$responseBag->add($this->buildResponse($request, $response));
+			$response = $responder->respond($request);
+			if (empty($response)) {
+				continue;
 			}
+			$responseBag->add($response);
 		}
 
 		return $responseBag;
@@ -117,13 +115,5 @@ class Dispatcher
 				return;
 			}
 		}
-	}
-
-	protected function buildResponse(Request $request, ?string $response) : Response
-	{
-		$reply = new Response();
-		$reply->setMeta($request->getMeta());
-		$reply->setResponse($response);
-		return $reply;
 	}
 }
