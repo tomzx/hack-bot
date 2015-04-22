@@ -82,6 +82,7 @@ class IRC extends Adapter
 				$reply_to = $this->isChannel($to) ? $to : $nick;
 				$meta = [
 					'irc' => [
+						'adapter' => $this,
 						'from' => $from,
 						'nick' => $nick,
 						'command' => $parts[1],
@@ -109,7 +110,7 @@ class IRC extends Adapter
 		}
 	}
 
-	protected function send() : void
+	public function send() : void
 	{
 		$args = func_get_args();
 		$message = implode(' ', $args).self::ENDLINE;
@@ -131,12 +132,12 @@ class IRC extends Adapter
 
 	private function in($text) : void
 	{
-		Logger::info('[INPUT]  >>> '.trim($text));
+		Logger::info('[I] >>> '.trim($text));
 	}
 
 	private function out($text) : void
 	{
-		Logger::info('[OUTPUT] <<< '.trim($text));
+		Logger::info('[O] <<< '.trim($text));
 	}
 
 	public function run() : void
@@ -148,7 +149,7 @@ class IRC extends Adapter
 		$this->disconnect();
 	}
 
-	private function isChannel($target) : bool
+	public static function isChannel($target) : bool
 	{
 		return $target[0] === '#';
 	}
