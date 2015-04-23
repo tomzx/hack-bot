@@ -116,4 +116,9 @@ class Dispatcher
 			}
 		}
 	}
+
+	public function dataPath($path = '')
+	{
+		return __DIR__.'/../../../../data/'.$path;
+	}
 }

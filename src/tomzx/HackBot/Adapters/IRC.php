@@ -83,6 +83,7 @@ class IRC extends Adapter
 				$meta = [
 					'irc' => [
 						'adapter' => $this,
+						'server' => $this->configuration['server'].':'.$this->configuration['port'],
 						'from' => $from,
 						'nick' => $nick,
 						'command' => $parts[1],

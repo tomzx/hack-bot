@@ -24,6 +24,7 @@
 		"ext-readline": "*",
 
 		"fabpot/goutte": "~2.0",
+		"illuminate/database": "~5.0",
 		"tomzx/arry": "~0.1@dev"
 	},
 	"require-dev": {
