@@ -19,7 +19,7 @@ abstract class Responder
 
 	public function respond(Request $request) : ?Response
 	{
-		if ($matches = $this->getMatches($request)) {
+		if ($this->getMatches($request, $matches)) {
 			$data = ['meta' => $request->getMeta()] + $matches;
 			$response = $this->answer($data);
 			$response = implode(PHP_EOL, $response);
@@ -37,11 +37,11 @@ abstract class Responder
 		return null;
 	}
 
-	public function getMatches(Request $request) : array
+	protected function getMatches(Request $request, &$matches = []) : bool
 	{
-		preg_match($this->getMatcher(), $request->getRequest(), $matches);
+		$result = preg_match($this->getMatcher(), $request->getRequest(), $matches);
 		$matches = $this->cleanMatches($matches);
-		return $matches;
+		return $result === 1;
 	}
 
 	protected function buildResponse(Request $request, ?string $response) : Response
