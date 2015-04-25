@@ -16,6 +16,8 @@ class IRC extends Adapter
 
 	protected float $lastMessageTimestamp = 0;
 
+	protected array $loggedUsers = [];
+
 	const ENDLINE = "\r\n";
 
 	public function __construct(array $configuration) : void
@@ -52,6 +54,14 @@ class IRC extends Adapter
 		$this->send('USER '.$this->configuration['nick'].' 0 * :'.$this->configuration['real_name']);
 	}
 
+	protected function reconnect() : void
+	{
+		$this->disconnect();
+		$this->connect();
+		$this->login();
+		$this->join();
+	}
+
 	protected function join() : void
 	{
 		foreach ($this->configuration['channels'] as $channelData) {
@@ -63,20 +73,29 @@ class IRC extends Adapter
 	protected function loop() : void
 	{
 		while($data = fgets($this->socket)) {
-			$this->out($data);
+			$this->parseLine($data);
+		}
+	}
 
-			$parts = explode(' :', $data, 2) + [1 => null];
-			$trailing = trim($parts[1]);
-			$parts = explode(' ', $parts[0]);
-			if ($parts[0] === 'PING') {
-				$this->send('PONG '.$trailing);
-				continue;
-			}
+	protected function parseLine(string $data) : void
+	{
+		$this->out($data);
 
-			$from = substr($parts[0], 1);
-			list($nick) = explode('!', $from);
+		$parts = explode(' :', $data, 2) + [1 => null];
+		$trailing = trim($parts[1]);
+		$parts = explode(' ', $parts[0]);
+		if ($parts[0] === 'PING') {
+			$this->send('PONG '.$trailing);
+			return;
+		}
 
-			if ($parts[1] === 'PRIVMSG') {
+		$from = substr($parts[0], 1);
+		list($nick) = explode('!', $from);
+
+		$command = $parts[1];
+
+		switch ($command) {
+			case 'PRIVMSG':
 				$query = $trailing;
 				$to = $parts[2];
 				$reply_to = $this->isChannel($to) ? $to : $nick;
@@ -102,12 +121,44 @@ class IRC extends Adapter
 						$lines = explode(PHP_EOL, $response->getResponse());
 						foreach ($lines as $line) {
 							if ($line) {
-								$this->send('PRIVMSG '.$reply_to.' :'.$line);
+								$this->privmsg($reply_to, $line);
 							}
 						}
 					}
 				}
-			}
+				break;
+			case 'JOIN':
+				break;
+			case 'PART':
+				break;
+			case 'QUIT':
+				break;
+			case 'NOTICE':
+				break;
+			case 'KICK':
+				break;
+			case 'NICK':
+				break;
+			default:
+				if (is_int($command)) {
+					$this->parseNumeric($command, $trailing);
+				}
+		}
+	}
+
+	protected function parseNumeric(int $commandNumber, $parameters) : void
+	{
+		switch ($commandNumber) {
+			case 353: // List all users in joined channel
+				break;
+			case 376: // Identify
+				break;
+			case 471:
+			case 472:
+			case 473:
+			case 474:
+			case 475: // Cannot join channel
+				break;
 		}
 	}
 
@@ -129,6 +180,11 @@ class IRC extends Adapter
 			usleep($toSleep*1e6);
 		}
 		$this->lastMessageTimestamp = $now;
+	}
+
+	public function privmsg($target, $message) : void
+	{
+		$this->send('PRIVMSG '.$target.' :'.$message);
 	}
 
 	private function in($text) : void
@@ -153,5 +209,51 @@ class IRC extends Adapter
 	public static function isChannel($target) : bool
 	{
 		return $target[0] === '#';
+	}
+
+	public function getChannelList() : array
+	{
+
+	}
+
+	public function getUsersInChannel(string $channel) : array
+	{
+
+	}
+
+	protected function addLoggedUser($nick) : void
+	{
+		if ( ! $this->isKnownLoggedIn($nick)) {
+			$this->loggedUsers[$nick] = time();
+			Logger::debug('Logged in user '.$nick.' was added to the logged user list.');
+		}
+	}
+
+	protected function removeLoggedUser($nick) : void
+	{
+		if ($this->isKnownLoggedIn($nick)) {
+			unset($this->loggedUsers[$nick]);
+			Logger::debug('Logged in user '.$nick.' was removed to the logged user list.');
+		}
+	}
+
+	protected function isKnownLoggedIn($nick) : bool
+	{
+		return array_key_exists($nick, $this->loggedUsers);
+	}
+
+	public function isLoggedIn(string $nick) : bool
+	{
+		Logger::debug('Checking if user '.$nick.' is logged in...');
+
+		if ($this->isKnownLoggedIn($nick)) {
+			Logger::debug('User '.$nick.' is logged in!');
+			return true;
+		} else {
+			Logger::debug('User '.$nick.' logged in state is unknown, querying server...');
+			$this->privmsg('NICKSERV', 'ACC '.$nick);
+
+			return false;
+		}
 	}
 }
