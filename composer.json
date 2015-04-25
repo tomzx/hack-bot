@@ -23,6 +23,7 @@
 		"hhvm": ">=3.3.0",
 		"ext-readline": "*",
 
+		"beatswitch/lock": "~0.1@dev",
 		"fabpot/goutte": "~2.0",
 		"illuminate/database": "~5.0",
 		"tomzx/arry": "~0.1@dev"
