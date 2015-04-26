@@ -14,7 +14,7 @@ chdir(__DIR__.'/..');
 Logger::setEnabled(false);
 
 $dispatcher = new Dispatcher();
-$dispatcher->initializeResponders();
+$dispatcher->initialize();
 
 $web = new Web();
 $web->setDispatcher($dispatcher);

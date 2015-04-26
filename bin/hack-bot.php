@@ -6,7 +6,7 @@ use tomzx\HackBot\Adapters\Shell;
 require __DIR__.'/../vendor/autoload.php';
 
 $dispatcher = new Dispatcher();
-$dispatcher->initializeResponders();
+$dispatcher->initialize();
 
 $shell = new Shell();
 $shell->setDispatcher($dispatcher);

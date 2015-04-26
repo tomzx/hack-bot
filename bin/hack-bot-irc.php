@@ -18,7 +18,7 @@ $configuration = [
 ];
 
 $dispatcher = new Dispatcher();
-$dispatcher->initializeResponders();
+$dispatcher->initialize();
 
 $irc = new IRC($configuration);
 $irc->setDispatcher($dispatcher);

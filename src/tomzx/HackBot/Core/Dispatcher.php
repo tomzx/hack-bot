@@ -2,13 +2,22 @@
 
 namespace tomzx\HackBot\Core;
 
+use BeatSwitch\Lock\Manager;
 use tomzx\HackBot\Core\Logger;
 use tomzx\HackBot\Core\Responders\Command;
 use tomzx\HackBot\Core\Responders\Listener;
 
 class Dispatcher
 {
+	protected LockManager $lockManager;
+
 	protected array $responders = [];
+
+	public function initialize()
+	{
+		$this->initializeLockManager();
+		$this->initializeResponders();
+	}
 
 	public function initializeResponders(array $toInitialize = []) : array
 	{
@@ -117,8 +126,13 @@ class Dispatcher
 		}
 	}
 
-	public function dataPath($path = '')
+	protected function initializeLockManager() : void
 	{
-		return __DIR__.'/../../../../data/'.$path;
+		$this->lockManager = new LockManager();
+	}
+
+	public function getLockManager() : Manager
+	{
+		return $this->lockManager->getManager();
 	}
 }
